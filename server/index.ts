@@ -88,9 +88,9 @@ app.use((req, res, next) => {
   const port = 5000;
   server.listen({
   port,
-  host: "127.0.0.1", // force IPv4
+  host: "0.0.0.0", // force IPv4
 }, () => {
-  log(`serving on http://127.0.0.1:${port}`);
+  log(`serving on http://0.0.0.0:${port}`);
 });
 
 })();

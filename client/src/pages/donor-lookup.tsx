@@ -40,9 +40,10 @@ export default function DonorLookup() {
       if (communityFilter && communityFilter !== "all")
         params.append("community", communityFilter);
 
-      const response = await fetch(`/api/donors/search?${params}`, {
-        credentials: "include",
-      });
+      const response = await fetch(`https://temple-donation-bnuj.onrender.com/api/donors/search?${params}`, {
+  credentials: "include",
+});
+
 
       if (!response.ok) {
         throw new Error("Failed to fetch donors");

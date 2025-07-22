@@ -88,14 +88,15 @@ export default function DonationForm({
     mutationFn: async (data: InsertDonation) => {
       if (isEditMode && initialData) {
         // Update existing donation
-        const response = await fetch(`/api/donations/${initialData.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(data),
-        });
+        const response = await fetch(`https://temple-donation-bnuj.onrender.com/api/donations/${initialData.id}`, {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include",
+  body: JSON.stringify(data),
+});
+
         if (!response.ok) {
           throw new Error("Failed to update donation");
         }
@@ -190,9 +191,10 @@ export default function DonationForm({
   const checkReceiptNumber = async (receiptNo: string) => {
     if (receiptNo && receiptNo.trim() !== "" && !isEditMode) {
       try {
-        const response = await fetch(`/api/donations/check-receipt/${encodeURIComponent(receiptNo)}`, {
-          credentials: "include",
-        });
+        const response = await fetch(`https://temple-donation-bnuj.onrender.com/api/donations/check-receipt/${encodeURIComponent(receiptNo)}`, {
+  credentials: "include",
+});
+
         if (response.ok) {
           const result = await response.json();
           if (result.exists) {
@@ -219,9 +221,10 @@ export default function DonationForm({
   const checkExistingDonor = async (phone: string) => {
     if (phone.length >= 10) {
       try {
-        const response = await fetch(`/api/donors/${phone}`, {
-          credentials: "include",
-        });
+        const response = await fetch(`https://temple-donation-bnuj.onrender.com/api/donors/${phone}`, {
+  credentials: "include",
+});
+
         if (response.ok) {
           const donor = await response.json();
           setDonorHistory(donor);

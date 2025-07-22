@@ -47,12 +47,13 @@ export default function AdminSettings({ onBack }: AdminSettingsProps) {
 
   const changeCredentialsMutation = useMutation({
     mutationFn: async (data: CredentialsForm) => {
-      const response = await fetch("/api/auth/change-credentials", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      const response = await fetch("https://temple-donation-bnuj.onrender.com/api/auth/change-credentials", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify(data),
+});
+
       
       if (!response.ok) {
         const error = await response.json();

@@ -40,10 +40,11 @@ function Navigation() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await fetch("https://temple-donation-bnuj.onrender.com/api/auth/logout", {
+  method: "POST",
+  credentials: "include",
+});
+
       // Refresh auth status
       queryClient.invalidateQueries({ queryKey: ["/api/auth/status"] });
       setLocation("/");

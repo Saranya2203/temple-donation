@@ -39,12 +39,13 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginForm) => {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      const response = await fetch("https://temple-donation-bnuj.onrender.com/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify(data),
+});
+
       if (!response.ok) {
         throw new Error("Invalid credentials");
       }

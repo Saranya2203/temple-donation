@@ -52,9 +52,9 @@ export default function AdminPanel() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/status", {
-          credentials: "include",
-        });
+        const response = await fetch("https://temple-donation-bnuj.onrender.com/api/auth/status", {
+  credentials: "include",
+});
         const data = await response.json();
         setIsAuthenticated(data.isAuthenticated);
         setUsername(data.username || "");
@@ -67,10 +67,10 @@ export default function AdminPanel() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      const response = await fetch("https://temple-donation-bnuj.onrender.com/api/auth/logout", {
+  method: "POST",
+  credentials: "include",
+});
       return response.json();
     },
     onSuccess: () => {
@@ -84,9 +84,9 @@ export default function AdminPanel() {
     // Re-check authentication status to get username
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/status", {
-          credentials: "include",
-        });
+        const response = await fetch("https://temple-donation-bnuj.onrender.com/api/auth/status", {
+  credentials: "include",
+});
         const data = await response.json();
         setIsAuthenticated(data.isAuthenticated);
         setUsername(data.username || "");
@@ -107,9 +107,10 @@ export default function AdminPanel() {
         }
       });
 
-      const response = await fetch(`/api/donations?${params}`, {
-        credentials: "include",
-      });
+      const response = await fetch(`https://temple-donation-bnuj.onrender.com/api/donations?${params}`, {
+  credentials: "include",
+});
+
 
       if (!response.ok) {
         throw new Error("Failed to fetch donations");
@@ -122,10 +123,11 @@ export default function AdminPanel() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/donations/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const response = await fetch(`https://temple-donation-bnuj.onrender.com/api/donations/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+});
+
       if (!response.ok) {
         throw new Error("Failed to delete donation");
       }
@@ -164,9 +166,10 @@ export default function AdminPanel() {
 
   const handleExport = async () => {
     try {
-      const response = await fetch("/api/donations/export", {
-        credentials: "include",
-      });
+      const response = await fetch("https://temple-donation-bnuj.onrender.com/api/donations/export", {
+  credentials: "include",
+});
+
 
       if (response.ok) {
         const blob = await response.blob();

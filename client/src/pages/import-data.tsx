@@ -29,10 +29,12 @@ export default function ImportData() {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await fetch('/api/donations/import', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch('https://temple-donation-bnuj.onrender.com/api/donations/import', {
+  method: 'POST',
+  body: formData,
+  credentials: 'include'
+});
+
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
