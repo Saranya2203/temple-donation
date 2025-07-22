@@ -1,0 +1,3 @@
+receiptNo,name,phone,location,community,amount,paymentMode,inscription,donationDate
+TEST001,"Test User",9876543210,"Test City","any",500,"cash","false","2025-06-30"
+TEST002,"Another User",8765432109,"Test Town","payiran",1000,"upi","true","2025-06-29"

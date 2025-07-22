@@ -1,0 +1,70 @@
+
+// Google Apps Script Code for Temple Donation Form Integration
+// This script automatically sends form submissions to your temple donation system
+
+function onFormSubmit(e) {
+  const responses = e.namedValues;
+  
+  // Extract form data - Update field names to match your Google Form exactly
+  const donationData = {
+    receiptNo: responses['Receipt Number'][0],
+    name: responses['Full Name'][0],
+    phone: responses['Mobile/Phone Number'][0],
+    community: mapCommunity(responses['Community (Kulam)'][0]),
+    location: responses['City/Village'][0],
+    amount: parseInt(responses['Donation Amount (₹)'][0]),
+    paymentMode: mapPaymentMode(responses['Payment Method'][0]),
+    inscription: responses['Inscription Required?'][0].toLowerCase() === 'yes',
+    donationDate: responses['Donation Date'] ? responses['Donation Date'][0] : null
+  };
+  
+  // Send to your temple website's webhook endpoint
+  const webhookUrl = 'https://871e1aae-a07b-4d41-8f1f-8003d9493df3-00-1gmaxk4vtdlek.picard.replit.dev/api/google-form-webhook';
+  
+  const options = {
+    'method': 'POST',
+    'headers': {
+      'Content-Type': 'application/json',
+    },
+    'payload': JSON.stringify(donationData)
+  };
+  
+  try {
+    const response = UrlFetchApp.fetch(webhookUrl, options);
+    if (response.getResponseCode() === 200) {
+      console.log('✅ Donation submitted successfully to temple system');
+      console.log('Receipt Number:', donationData.receiptNo);
+    } else {
+      console.error('❌ Error response:', response.getContentText());
+    }
+  } catch (error) {
+    console.error('❌ Failed to submit donation:', error);
+    // You can add email notification here for failed submissions
+  }
+}
+
+// Helper function to map community names to system values
+function mapCommunity(community) {
+  const communityMap = {
+    'Any / எதுவும்': 'any',
+    'Payiran / பயிரான்': 'payiran',
+    'Semban / செம்பன்': 'semban',
+    'Odhaalan / ஓதாளன்': 'odhaalan',
+    'Aavan / ஆவான்': 'aavan',
+    'Aadai / ஆடை': 'aadai',
+    'Vizhiyan / விழியன்': 'vizhiyan'
+  };
+  return communityMap[community] || 'any';
+}
+
+// Helper function to map payment modes to system values
+function mapPaymentMode(paymentMode) {
+  const paymentMap = {
+    'Cash': 'cash',
+    'Card (Debit/Credit)': 'card',
+    'UPI': 'upi',
+    'Bank Transfer': 'bank_transfer',
+    'Cheque': 'cheque'
+  };
+  return paymentMap[paymentMode] || 'cash';
+}

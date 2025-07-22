@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Donation Management - Simple Version</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕉️ Temple Donation Management</h1>
+            <div class="language-toggle">
+                <button onclick="toggleLanguage()" id="langBtn">தமிழ்</button>
+            </div>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" onclick="showSection('donation')" data-en="New Donation" data-ta="புதிய நன்கொடை">New Donation</button>
+            <button class="nav-btn" onclick="showSection('search')" data-en="Donor Search" data-ta="நன்கொடையாளர் தேடல்">Donor Search</button>
+            <button class="nav-btn" onclick="showSection('admin')" data-en="Admin Panel" data-ta="நிர்வாக பாட்டு">Admin Panel</button>
+        </nav>
+
+        <!-- Donation Form Section -->
+        <section id="donation" class="section active">
+            <div class="card">
+                <h2 data-en="New Donation Entry" data-ta="புதிய நன்கொடை பதிவு">New Donation Entry</h2>
+                <form id="donationForm">
+                    <div class="form-group">
+                        <label data-en="Receipt Number" data-ta="ரசீது எண்">Receipt Number</label>
+                        <input type="text" id="receiptNo" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-en="Name" data-ta="பெயர்">Name</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Phone" data-ta="தொலைபேசி">Phone</label>
+                            <input type="tel" id="phone" pattern="[0-9]{10}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-en="Community" data-ta="குலம்">Community</label>
+                            <select id="community" required>
+                                <option value="any">Any</option>
+                                <option value="payiran">Payiran</option>
+                                <option value="chozhan">Chozhan</option>
+                                <option value="pandiyan">Pandiyan</option>
+                                <option value="othaalan">Othaalan</option>
+                                <option value="vizhiyan">Vizhiyan</option>
+                                <option value="aadai">Aadai</option>
+                                <option value="aavan">Aavan</option>
+                                <option value="semban">Semban</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Location" data-ta="இடம்">Location</label>
+                            <input type="text" id="location" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-en="Address" data-ta="முகவரி">Address</label>
+                        <textarea id="address" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-en="Amount (₹)" data-ta="தொகை (₹)">Amount (₹)</label>
+                            <input type="number" id="amount" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-en="Payment Mode" data-ta="பணம் செலுத்தும் முறை">Payment Mode</label>
+                            <select id="paymentMode" required>
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="bankTransfer">Bank Transfer</option>
+                                <option value="cheque">Cheque</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="inscription">
+                            <span data-en="Inscription Required" data-ta="பொறிப்பு தேவை">Inscription Required</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" data-en="Save Donation" data-ta="நன்கொடை சேமிக்க">Save Donation</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section id="search" class="section">
+            <div class="card">
+                <h2 data-en="Donor Search" data-ta="நன்கொடையாளர் தேடல்">Donor Search</h2>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Enter name or phone number" data-en-placeholder="Enter name or phone number" data-ta-placeholder="பெயர் அல்லது தொலைபேசி எண்ணை உள்ளிடவும்">
+                    <button onclick="searchDonors()" class="btn-primary" data-en="Search" data-ta="தேடல்">Search</button>
+                </div>
+                <div id="searchResults"></div>
+            </div>
+        </section>
+
+        <!-- Admin Panel Section -->
+        <section id="admin" class="section">
+            <div class="card">
+                <h2 data-en="Admin Panel" data-ta="நிர்வாக பாட்டு">Admin Panel</h2>
+                <div id="adminLogin" class="login-form">
+                    <div class="form-group">
+                        <label data-en="Username" data-ta="பயனர் பெயர்">Username</label>
+                        <input type="text" id="username">
+                    </div>
+                    <div class="form-group">
+                        <label data-en="Password" data-ta="கடவுச்சொல்">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password">
+                            <button type="button" class="eye-btn" onclick="togglePassword('password')">
+                                <span class="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="adminLogin()" class="btn-primary" data-en="Login" data-ta="உள்நுழை">Login</button>
+                </div>
+                <div id="adminDashboard" style="display:none;">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 data-en="Total Collection" data-ta="மொத்த சேகரிப்பு">Total Collection</h3>
+                            <p id="totalCollection">₹0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 data-en="Total Donors" data-ta="மொத்த நன்கொடையாளர்கள்">Total Donors</h3>
+                            <p id="totalDonors">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 data-en="This Month" data-ta="இந்த மாதம்">This Month</h3>
+                            <p id="thisMonth">₹0</p>
+                        </div>
+                    </div>
+                    <div class="admin-actions">
+                        <button onclick="exportData()" class="btn-secondary" data-en="Export CSV" data-ta="CSV ஏற்றுமதி">Export CSV</button>
+                        <button onclick="showImportModal()" class="btn-secondary" data-en="Import Data" data-ta="தரவு இறக்குமதி">Import Data</button>
+                    </div>
+                    <div id="donationsTable"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeImportModal()">&times;</span>
+            <h2 data-en="Import Donation Data" data-ta="நன்கொடை தரவு இறக்குமதி">Import Donation Data</h2>
+            <input type="file" id="importFile" accept=".csv,.xlsx,.xls">
+            <button onclick="importData()" class="btn-primary" data-en="Import" data-ta="இறக்குமதி">Import</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

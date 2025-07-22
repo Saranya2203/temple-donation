@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com https://temple-giving-dharanipriya154.replit.dev 'unsafe-eval' 'unsafe-inline'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: content:;">
+    
+    <title>Temple Donations</title>
+    <link rel="stylesheet" href="css/mobile-styles.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #8B5A3C 0%, #A0522D 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .app-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .app-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content-container {
+            flex: 1;
+            background: white;
+            margin: 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            padding: 40px 20px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #8B5A3C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #666;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .error-container {
+            padding: 40px 20px;
+            text-align: center;
+            color: #e74c3c;
+        }
+        
+        .error-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .retry-button {
+            background: #8B5A3C;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .retry-button:hover {
+            background: #A0522D;
+        }
+        
+        .webapp-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: calc(100vh - 120px);
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
+            z-index: 1000;
+        }
+        
+        .connection-status.offline {
+            background: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+        }
+        
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="connection-status" id="connectionStatus"></div>
+    
+    <div class="app-header">
+        <div class="temple-symbol">🕉️</div>
+        <button class="language-toggle" id="languageToggle">தமிழ்</button>
+        <h1 id="appTitle">Temple Donations</h1>
+        <p id="appSubtitle">Mobile Donation Management</p>
+    </div>
+    
+    <div class="content-container">
+        <div class="loading-container" id="loadingContainer">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Connecting to Temple System...</div>
+            <div class="loading-subtitle" id="loadingSubtitle">Please wait while we establish connection</div>
+        </div>
+        
+        <div class="error-container" id="errorContainer" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <div class="error-title" id="errorTitle">Connection Failed</div>
+            <div class="error-message" id="errorMessage">Unable to connect to the temple donation system. Please check your internet connection.</div>
+            <button class="retry-button" onclick="loadWebApp()">Try Again</button>
+        </div>
+        
+        <iframe id="webappFrame" class="webapp-frame" style="display: none;"></iframe>
+    </div>
+    
+    <div class="status-bar" id="statusBar">
+        <div class="status-text" id="statusText">Ready</div>
+        <div class="status-time" id="statusTime"></div>
+    </div>
+
+    <script src="cordova.js"></script>
+    <script>
+        // Configuration
+        const WEB_APP_URL = 'https://temple-giving-dharanipriya154.replit.dev';
+        let currentLanguage = 'en';
+        
+        // Translation strings
+        const translations = {
+            en: {
+                appTitle: 'Temple Donations',
+                appSubtitle: 'Mobile Donation Management',
+                loadingText: 'Connecting to Temple System...',
+                loadingSubtitle: 'Please wait while we establish connection',
+                errorTitle: 'Connection Failed',
+                errorMessage: 'Unable to connect to the temple donation system. Please check your internet connection.',
+                retryButton: 'Try Again',
+                languageButton: 'தமிழ்',
+                statusConnected: 'Connected to Temple System',
+                statusDisconnected: 'No Internet Connection'
+            },
+            ta: {
+                appTitle: 'கோயில் நன்கொடை',
+                appSubtitle: 'மொபைல் நன்கொடை மேலாண்மை',
+                loadingText: 'கோயில் அமைப்புடன் இணைக்கிறது...',
+                loadingSubtitle: 'இணைப்பை நிறுவும் வரை காத்திருக்கவும்',
+                errorTitle: 'இணைப்பு தோல்வி',
+                errorMessage: 'கோயில் நன்கொடை அமைப்புடன் இணைக்க முடியவில்லை. தயவுசெய்து உங்கள் இணைய இணைப்பைச் சரிபார்க்கவும்.',
+                retryButton: 'மீண்டும் முயற்சிக்கவும்',
+                languageButton: 'English',
+                statusConnected: 'கோயில் அமைப்புடன் இணைக்கப்பட்டது',
+                statusDisconnected: 'இணைய இணைப்பு இல்லை'
+            }
+        };
+        
+        // Device ready event
+        document.addEventListener('deviceready', onDeviceReady, false);
+        
+        function onDeviceReady() {
+            console.log('Cordova is ready');
+            updateConnectionStatus(true);
+            loadWebApp();
+        }
+        
+        // Load web application
+        function loadWebApp() {
+            const iframe = document.getElementById('webappFrame');
+            const loadingContainer = document.getElementById('loadingContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            // Show loading
+            loadingContainer.style.display = 'flex';
+            errorContainer.style.display = 'none';
+            iframe.style.display = 'none';
+            
+            // Set iframe source
+            iframe.src = WEB_APP_URL;
+            
+            // Handle iframe load
+            iframe.onload = function() {
+                setTimeout(() => {
+                    loadingContainer.style.display = 'none';
+                    iframe.style.display = 'block';
+                    updateConnectionStatus(true);
+                }, 500);
+            };
+            
+            // Handle iframe error
+            iframe.onerror = function() {
+                loadingContainer.style.display = 'none';
+                errorContainer.style.display = 'block';
+                updateConnectionStatus(false);
+            };
+            
+            // Timeout fallback
+            setTimeout(() => {
+                if (iframe.style.display === 'none' && loadingContainer.style.display === 'flex') {
+                    loadingContainer.style.display = 'none';
+                    errorContainer.style.display = 'block';
+                    updateConnectionStatus(false);
+                }
+            }, 10000);
+        }
+        
+        // Update connection status indicator
+        function updateConnectionStatus(connected) {
+            const statusIndicator = document.getElementById('connectionStatus');
+            if (connected) {
+                statusIndicator.classList.remove('offline');
+            } else {
+                statusIndicator.classList.add('offline');
+            }
+        }
+        
+        // Language toggle functionality
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'ta' : 'en';
+            updateLanguage();
+        }
+        
+        function updateLanguage() {
+            const t = translations[currentLanguage];
+            
+            document.getElementById('appTitle').textContent = t.appTitle;
+            document.getElementById('appSubtitle').textContent = t.appSubtitle;
+            document.getElementById('loadingText').textContent = t.loadingText;
+            document.getElementById('loadingSubtitle').textContent = t.loadingSubtitle;
+            document.getElementById('errorTitle').textContent = t.errorTitle;
+            document.getElementById('errorMessage').textContent = t.errorMessage;
+            document.getElementById('languageToggle').textContent = t.languageButton;
+            
+            const retryButton = document.querySelector('.retry-button');
+            if (retryButton) {
+                retryButton.textContent = t.retryButton;
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('languageToggle').addEventListener('click', toggleLanguage);
+        
+        // Network status monitoring
+        document.addEventListener('online', function() {
+            updateConnectionStatus(true);
+            if (document.getElementById('errorContainer').style.display === 'block') {
+                loadWebApp();
+            }
+        });
+        
+        document.addEventListener('offline', function() {
+            updateConnectionStatus(false);
+        });
+        
+        // Handle back button
+        document.addEventListener('backbutton', function(e) {
+            const iframe = document.getElementById('webappFrame');
+            if (iframe.style.display === 'block') {
+                // Let the web app handle back navigation
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Status bar functionality
+        function updateStatusBar(message, showTime = true) {
+            const statusText = document.getElementById('statusText');
+            const statusTime = document.getElementById('statusTime');
+            const statusBar = document.getElementById('statusBar');
+            
+            statusText.textContent = message;
+            
+            if (showTime) {
+                const now = new Date();
+                statusTime.textContent = now.toLocaleTimeString();
+            } else {
+                statusTime.textContent = '';
+            }
+            
+            statusBar.classList.add('show');
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                statusBar.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Enhanced device features
+        function enableDeviceFeatures() {
+            // Prevent screen sleep during app use
+            if (window.plugins && window.plugins.insomnia) {
+                window.plugins.insomnia.keepAwake();
+            }
+            
+            // Handle device back button
+            document.addEventListener('backbutton', handleBackButton, false);
+            
+            // Handle menu button
+            document.addEventListener('menubutton', showAppMenu, false);
+            
+            // Battery status monitoring
+            if (navigator.battery) {
+                navigator.battery.addEventListener('levelchange', updateBatteryStatus);
+            }
+            
+            // Update status bar on app resume
+            document.addEventListener('resume', function() {
+                const t = translations[currentLanguage];
+                updateStatusBar(t.statusConnected);
+                loadWebApp();
+            });
+            
+            // Update status on app pause
+            document.addEventListener('pause', function() {
+                console.log('App paused');
+            });
+        }
+        
+        function handleBackButton(e) {
+            e.preventDefault();
+            const iframe = document.getElementById('webappFrame');
+            
+            if (iframe.style.display === 'block') {
+                // Try to go back in the web app
+                iframe.contentWindow.history.back();
+            } else {
+                // Exit app
+                navigator.app.exitApp();
+            }
+        }
+        
+        function showAppMenu() {
+            // Simple menu functionality
+            const options = [
+                currentLanguage === 'en' ? 'Refresh App' : 'ஆப்பை புதுப்பிக்கவும்',
+                currentLanguage === 'en' ? 'Switch Language' : 'மொழியை மாற்றவும்',
+                currentLanguage === 'en' ? 'About' : 'பற்றி'
+            ];
+            
+            if (navigator.notification) {
+                navigator.notification.actionSheet(
+                    currentLanguage === 'en' ? 'App Menu' : 'ஆப் மெனு',
+                    function(buttonIndex) {
+                        switch(buttonIndex) {
+                            case 1: loadWebApp(); break;
+                            case 2: toggleLanguage(); break;
+                            case 3: showAbout(); break;
+                        }
+                    },
+                    currentLanguage === 'en' ? 'Temple Donations' : 'கோயில் நன்கொடை',
+                    options
+                );
+            }
+        }
+        
+        function showAbout() {
+            const message = currentLanguage === 'en' 
+                ? 'Temple Donations v1.0\\nDeveloped for temple management\\nConnects to: ' + WEB_APP_URL
+                : 'கோயில் நன்கொடை v1.0\\nகோயில் நிர்வாகத்திற்காக உருவாக்கப்பட்டது\\nஇணைப்பு: ' + WEB_APP_URL;
+                
+            if (navigator.notification) {
+                navigator.notification.alert(
+                    message,
+                    null,
+                    currentLanguage === 'en' ? 'About' : 'பற்றி',
+                    'OK'
+                );
+            } else {
+                alert(message);
+            }
+        }
+        
+        function updateBatteryStatus() {
+            if (navigator.battery && navigator.battery.level < 0.2) {
+                const message = currentLanguage === 'en' 
+                    ? 'Low battery - Consider charging your device'
+                    : 'குறைந்த பேட்டரி - உங்கள் சாதனத்தை சார்ஜ் செய்யவும்';
+                updateStatusBar(message);
+            }
+        }
+        
+        // Enhanced network monitoring
+        function setupNetworkMonitoring() {
+            // Check connection quality
+            function checkConnectionQuality() {
+                const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                if (connection) {
+                    const type = connection.effectiveType;
+                    if (type === 'slow-2g' || type === '2g') {
+                        const message = currentLanguage === 'en' 
+                            ? 'Slow connection detected'
+                            : 'மெதுவான இணைப்பு கண்டறியப்பட்டது';
+                        updateStatusBar(message);
+                    }
+                }
+            }
+            
+            if (navigator.connection) {
+                navigator.connection.addEventListener('change', checkConnectionQuality);
+            }
+        }
+        
+        // Initialize for web testing (if cordova not available)
+        if (typeof cordova === 'undefined') {
+            setTimeout(onDeviceReady, 500);
+        } else {
+            // Enable device features when Cordova is ready
+            document.addEventListener('deviceready', function() {
+                onDeviceReady();
+                enableDeviceFeatures();
+                setupNetworkMonitoring();
+            });
+        }
+    </script>
+</body>
+</html>

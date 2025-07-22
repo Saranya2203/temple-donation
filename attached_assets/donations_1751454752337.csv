@@ -1,0 +1,9 @@
+S.No,Receipt No,Name,Community,Location,Phone,Amount,Payment Mode,Inscription,Date
+1,8,"Ramya","payiran","erode",9791456201,90000,upi,No,6/28/2025
+2,7,"Ramya","payiran","erode",9791456201,500000,cash,No,6/28/2025
+3,6,"harini","vizhiyan","erode",9345276682,20000000,cheque,Yes,6/28/2025
+4,5,"Bala","aadai","tirunelveli",7894561230,50000000,upi,Yes,6/28/2025
+5,4,"pugazh","aavan","bhavani",1234567890,2000000,cash,No,6/28/2025
+6,3,"saranya","odhaalan","erode",7010773548,1000000,card,Yes,6/28/2025
+7,2,"Priya","semban","coimbatore",9626880720,50000,bankTransfer,No,6/28/2025
+8,1,"Ramya","payiran","erode",9443895676,200000,upi,Yes,6/28/2025
